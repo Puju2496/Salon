@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/service"
+        android:enabled="true"
+        android:icon="@drawable/service_icon"
+        android:title="@string/services"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/cart"
+        android:enabled="true"
+        android:icon="@drawable/cart_icon"
+        android:title="@string/cart"
+        app:showAsAction="always"/>
+</menu>

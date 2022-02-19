@@ -5,9 +5,13 @@
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
+    <color name="black">#000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="bottom_nav_item_unselected">#4D000000</color>
     <color name="bottom_nav_background">#F1F1F1</color>
     <color name="divider_color">#DEDEDE</color>
+    <color name="grey">#CDCDCD</color>
+    <color name="light_green">#58BFA4</color>
+    <color name="light_blue">#CEE4E2</color>
+    <color name="employee_border">#D6D6D6</color>
 </resources>

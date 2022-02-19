@@ -85,7 +85,7 @@ dependencies {
 
     //Hilt
     implementation("com.google.dagger:hilt-android:2.40.5")
-    kapt("com.google.dagger:hilt-android-compiler:2.40.5")
+    kapt("com.google.dagger:hilt-compiler:2.40.5")
 
     //Fresco
     implementation("com.facebook.fresco:fresco:2.6.0")

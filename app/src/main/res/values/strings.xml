@@ -5,4 +5,6 @@
     <string name="cart">Cart</string>
     <string name="salon_title">GILE BEAUTY SALON</string>
     <string name="select_employees_description">Please select the employee(s) for this service.\nYou can select multiple employees.</string>
+    <string name="add_service_cart">Add service to cart</string>
+    <string name="price">$%.1f</string>
 </resources>
