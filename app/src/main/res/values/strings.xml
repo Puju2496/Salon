@@ -1,3 +1,8 @@
 <resources>
+    <string name="base_url">https://mockapi-123.herokuapp.com/</string>
     <string name="app_name">Salon</string>
+    <string name="services">Services</string>
+    <string name="cart">Cart</string>
+    <string name="salon_title">GILE BEAUTY SALON</string>
+    <string name="select_employees_description">Please select the employee(s) for this service.\nYou can select multiple employees.</string>
 </resources>
