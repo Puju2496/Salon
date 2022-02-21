@@ -2,6 +2,7 @@ package com.example.salon.ui.fragments
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -16,16 +17,16 @@ import com.example.salon.databinding.FragmentServicesBinding
 import com.example.salon.itemdecoration.SpaceItemDecoration
 import com.example.salon.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 
 @AndroidEntryPoint
-class ServicesFragment : Fragment(R.layout.fragment_services), ServiceItemAdapter.OnItemClickListener, View.OnClickListener {
+class ServicesFragment : Fragment(R.layout.fragment_services),
+    ServiceItemAdapter.OnItemClickListener, View.OnClickListener {
 
     private val viewModel by activityViewModels<HomeViewModel>()
 
     private lateinit var binding: FragmentServicesBinding
 
-    private lateinit var serviceDetailFragment: ServiceDetailFragment
+    private var serviceDetailFragment: ServiceDetailFragment? = null
 
     private val serviceItemAdapter = ServiceItemAdapter().apply {
         setOnClickListener(this@ServicesFragment)
@@ -43,7 +44,7 @@ class ServicesFragment : Fragment(R.layout.fragment_services), ServiceItemAdapte
         }
 
         binding.toolbar.setNavigationOnClickListener {
-            onRemoveFragment()
+            removeFragment()
         }
         binding.error.setOnClickListener(this)
 
@@ -59,6 +60,13 @@ class ServicesFragment : Fragment(R.layout.fragment_services), ServiceItemAdapte
             viewModel.fetchServices(requireContext())
     }
 
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            removeFragment()
+            remove()
+        }
+    }
+
     private val serviceObserver = Observer<List<Service>> {
         serviceItemAdapter.setServiceList(it)
     }
@@ -69,11 +77,13 @@ class ServicesFragment : Fragment(R.layout.fragment_services), ServiceItemAdapte
     }
 
     private fun updateToolBar(isServiceDetailScreen: Boolean, service: Service? = null) {
-        val serviceTitle = service?.name?.split(" ")?.joinToString(" ") { word -> word.replaceFirstChar { it.uppercase() } }
+        val serviceTitle = service?.name?.split(" ")
+            ?.joinToString(" ") { word -> word.replaceFirstChar { it.uppercase() } }
         val navigationIcon = ContextCompat.getDrawable(requireContext(), R.drawable.back_icon)
         val servicePrice = getString(R.string.price, service?.price?.toDouble())
 
-        binding.toolbar.title = if (isServiceDetailScreen) serviceTitle else getString(R.string.salon_title)
+        binding.toolbar.title =
+            if (isServiceDetailScreen) serviceTitle else getString(R.string.salon_title)
         binding.toolbar.navigationIcon = if (isServiceDetailScreen) navigationIcon else null
         binding.price.text = if (isServiceDetailScreen) servicePrice else ""
 
@@ -81,10 +91,11 @@ class ServicesFragment : Fragment(R.layout.fragment_services), ServiceItemAdapte
         binding.container.isVisible = isServiceDetailScreen
     }
 
-    private fun onRemoveFragment() {
+    private fun removeFragment() {
         childFragmentManager.commit {
-            if (::serviceDetailFragment.isInitialized) {
-                remove(serviceDetailFragment)
+            if (serviceDetailFragment != null) {
+                remove(serviceDetailFragment!!)
+                serviceDetailFragment = null
                 updateToolBar(false)
             }
         }
@@ -101,8 +112,11 @@ class ServicesFragment : Fragment(R.layout.fragment_services), ServiceItemAdapte
     override fun onItemClicked(service: Service) {
         childFragmentManager.commit {
             serviceDetailFragment = ServiceDetailFragment.newInstance(service)
-            replace(R.id.container, serviceDetailFragment, SERVICE_DETAIL_TAG)
+            replace(R.id.container, serviceDetailFragment!!, SERVICE_DETAIL_TAG)
             updateToolBar(true, service)
+
+            //Handle onBackPressed when item is added
+            requireActivity().onBackPressedDispatcher.addCallback(onBackPressedCallback)
         }
     }
 

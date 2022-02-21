@@ -66,9 +66,9 @@ class HomeViewModel @Inject constructor(
     fun addToCart(context: Context, employees: ArrayList<Employee>?, services: ArrayList<Service>) {
         viewModelScope.launch(Dispatchers.IO) {
             val cart = Cart(employees = gson.toJson(employees), services = gson.toJson(services))
-            dao.insert(cart)
+            dao.insert(cart).apply {
+                Toast.makeText(context, context.getString(R.string.items_Added_notify), Toast.LENGTH_SHORT).show()
+            }
         }
-
-        Toast.makeText(context, " Item with employee(s) added to Cart", Toast.LENGTH_SHORT).show()
     }
 }

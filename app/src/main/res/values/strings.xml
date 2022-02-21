@@ -9,4 +9,6 @@
     <string name="price">$%.1f</string>
     <string name="connect_error">Please connect to network and retry</string>
     <string name="data_error">Please connect to valid network and retry</string>
+    <string name="no_item_in_cart">No item in cart</string>
+    <string name="items_Added_notify">\" Item with employee(s) added to Cart\"</string>
 </resources>

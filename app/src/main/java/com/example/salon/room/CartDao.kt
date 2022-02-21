@@ -11,5 +11,5 @@ interface CartDao {
     suspend fun getAll(): List<Cart>
 
     @Insert
-    suspend fun insert(item: Cart)
+    suspend fun insert(item: Cart): Long
 }

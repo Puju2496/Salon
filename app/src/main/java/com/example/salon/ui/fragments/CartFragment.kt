@@ -2,20 +2,17 @@ package com.example.salon.ui.fragments
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.salon.R
 import com.example.salon.adapter.CartAdapter
+import com.example.salon.data.Cart
 import com.example.salon.databinding.FragmentCartBinding
 import com.example.salon.itemdecoration.SpaceItemDecoration
-import com.example.salon.data.Cart
-import com.example.salon.data.Employee
-import com.example.salon.data.Service
 import com.example.salon.viewmodel.CartViewModel
-import com.example.salon.viewmodel.HomeViewModel
-import timber.log.Timber
 
 class CartFragment : Fragment(R.layout.fragment_cart) {
 
@@ -47,6 +44,7 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
     }
 
     private val observer = Observer<List<Cart>> {
+        binding.noItem.isVisible = it.isEmpty()
         cartAdapter.setCartList(it)
     }
 
