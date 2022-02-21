@@ -14,4 +14,5 @@
     <color name="light_green">#58BFA4</color>
     <color name="light_blue">#CEE4E2</color>
     <color name="employee_border">#D6D6D6</color>
+    <color name="cart_item_border">#E1E1E1</color>
 </resources>

@@ -1,11 +1,10 @@
 package com.example.salon.ui.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,14 +16,17 @@ import com.example.salon.data.Service
 import com.example.salon.databinding.FragmentServiceDetailBinding
 import com.example.salon.itemdecoration.SpaceItemDecoration
 import com.example.salon.viewmodel.HomeViewModel
+import java.util.stream.Collectors
 
-class ServiceDetailFragment : Fragment(R.layout.fragment_service_detail), View.OnClickListener, EmployeeItemAdapter.OnEmployeeSelectListener {
+class ServiceDetailFragment : Fragment(R.layout.fragment_service_detail), View.OnClickListener,
+    EmployeeItemAdapter.OnEmployeeSelectListener {
 
     private val viewModel by activityViewModels<HomeViewModel>()
 
     private lateinit var binding: FragmentServiceDetailBinding
 
     private var service: Service? = null
+    private var selectedEmployeeList: LinkedHashMap<Service, ArrayList<Employee>> = linkedMapOf()
 
     private val employeeItemAdapter = EmployeeItemAdapter().apply {
         setOnClickListener(this@ServiceDetailFragment)
@@ -48,23 +50,59 @@ class ServiceDetailFragment : Fragment(R.layout.fragment_service_detail), View.O
             addItemDecoration(SpaceItemDecoration(resources.getDimensionPixelOffset(R.dimen.employee_space)))
         }
 
-        binding.back.setOnClickListener(this)
         binding.addService.setOnClickListener(this)
+        binding.error.setOnClickListener(this)
 
-        viewModel.employeesLiveData.observe(viewLifecycleOwner, observer)
-        viewModel.fetchEmployees()
+        viewModel.employeesLiveData.observe(viewLifecycleOwner, employeeListObserver)
+        viewModel.employeesErrorLiveData.observe(viewLifecycleOwner, errorObserver)
+        viewModel.fetchEmployees(requireContext())
     }
 
-    private val observer = Observer<List<Employee>> {
+    private val employeeListObserver = Observer<List<Employee>> {
         employeeItemAdapter.setEmployeeList(it)
     }
 
-    override fun onClick(v: View?) {
+    private val errorObserver = Observer<String> {
+        binding.error.text = it
+        binding.employeeList.visibility = if (it.isEmpty()) View.VISIBLE else View.INVISIBLE
+        binding.error.isVisible = it.isNotEmpty()
+    }
 
+    private fun updateAddServiceToggle() {
+        binding.addService.isEnabled = !selectedEmployeeList.isNullOrEmpty()
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.addService -> {
+                val mappedData = selectedEmployeeList.keys.stream()
+                    .collect(Collectors.groupingBy { selectedEmployeeList[it] })
+
+                viewModel.addToCart(requireContext(), mappedData.keys.first(), mappedData.values.first() as ArrayList<Service>)
+
+            }
+            R.id.error -> {
+                viewModel.fetchEmployees(requireContext())
+            }
+        }
     }
 
     override fun onEmployeeSelected(employee: Employee) {
+        service?.apply {
+            if (!selectedEmployeeList.containsKey(this))
+                selectedEmployeeList[this] = arrayListOf()
+            selectedEmployeeList[this]?.add(employee)
+        }
+        updateAddServiceToggle()
+    }
 
+    override fun onEmployeeUnselected(employee: Employee) {
+        selectedEmployeeList[service]?.apply {
+            remove(employee)
+            if (count() == 0)
+                selectedEmployeeList.remove(service)
+        }
+        updateAddServiceToggle()
     }
 
     companion object {

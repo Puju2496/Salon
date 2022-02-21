@@ -11,8 +11,9 @@ data class Service(
     val image: String? = null
 ): Parcelable
 
+@Parcelize
 data class Employee(
     val id: Int = 0,
     val name: String? = null,
     val image: String? = null
-)
+): Parcelable

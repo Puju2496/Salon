@@ -14,8 +14,3 @@ fun loadImage(view: SimpleDraweeView, url: String) {
 fun setPrice(view: TextView, price: Int) {
     view.text = String.format(view.context.getString(R.string.price), price.toDouble())
 }
-
-@BindingAdapter("capitalizeText")
-fun capitalizeText(view: TextView, title: String) {
-    view.text = title.split(" ").joinToString(" ") { word -> word.replaceFirstChar { it.uppercase() } }
-}

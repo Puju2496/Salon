@@ -22,20 +22,25 @@ class HomeActivity : AppCompatActivity(R.layout.activity_home) {
         binding = ActivityHomeBinding.bind(findViewById(R.id.root))
 
         supportFragmentManager.commit {
+            add(R.id.container, cartFragment, CART_TAG)
             add(R.id.container, servicesFragment, SERVICE_TAG)
+
+            hide(cartFragment)
         }
 
         binding.bottomNav.setOnItemSelectedListener {
             return@setOnItemSelectedListener when (it.itemId) {
                 R.id.service -> {
                     supportFragmentManager.commit {
-                        replace(R.id.container, servicesFragment, SERVICE_TAG)
+                        hide(cartFragment)
+                            .show(servicesFragment)
                     }
                     true
                 }
                 R.id.cart -> {
                     supportFragmentManager.commit {
-                        replace(R.id.container, cartFragment, CART_TAG)
+                        hide(servicesFragment)
+                            .show(cartFragment)
                     }
                     true
                 }
@@ -46,7 +51,6 @@ class HomeActivity : AppCompatActivity(R.layout.activity_home) {
 
     companion object {
         private const val SERVICE_TAG = "service"
-        private const val SERVICE_DETAIL_TAG = "service detail"
         private const val CART_TAG = "cart"
     }
 }

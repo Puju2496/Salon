@@ -3,4 +3,6 @@
     <dimen name="service_item_space">38dp</dimen>
     <dimen name="employee_space">11dp</dimen>
     <dimen name="cart_item_space">18dp</dimen>
+    <dimen name="profile_item_space">10dp</dimen>
+    <dimen name="cart_services_item_space">15dp</dimen>
 </resources>

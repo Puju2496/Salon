@@ -1,6 +1,7 @@
 package com.example.salon.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.salon.BR
@@ -39,7 +40,7 @@ class ServiceItemAdapter() : RecyclerView.Adapter<ServiceItemAdapter.ItemViewHol
             binding.setVariable(BR.service, service)
             binding.executePendingBindings()
 
-            binding.next.setOnClickListener {
+            binding.root.setOnClickListener {
                 itemClickListener?.onItemClicked(service)
             }
         }

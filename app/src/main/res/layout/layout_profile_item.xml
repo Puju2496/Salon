@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="profile"
+            type="com.example.salon.data.Employee" />
+    </data>
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:layout_width="31dp"
+        android:layout_height="31dp"
+        app:imageUrl="@{profile.image}"
+        app:placeholderImage="@drawable/placeholder"
+        app:roundAsCircle="true"/>
+</layout>

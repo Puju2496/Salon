@@ -1,35 +1,74 @@
 package com.example.salon.viewmodel
 
+import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.salon.R
 import com.example.salon.data.Employee
 import com.example.salon.data.Service
+import com.example.salon.extension.isConnectedToNetwork
 import com.example.salon.repository.SalonRepository
+import com.example.salon.room.Cart
+import com.example.salon.room.CartDao
+import com.google.gson.GsonBuilder
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
+
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val repository: SalonRepository): ViewModel() {
+class HomeViewModel @Inject constructor(
+    private val repository: SalonRepository,
+    private val dao: CartDao
+) : ViewModel() {
+
+    private val gson = GsonBuilder().create()
 
     var servicesLiveData = MutableLiveData<List<Service>>()
-
     var employeesLiveData = MutableLiveData<List<Employee>>()
 
-    fun fetchServices() {
-        viewModelScope.launch {
-            val result = repository.getServices()
-            if (result.isSuccessful)
-                servicesLiveData.postValue(result.body()?.data)
-        }
+    var servicesErrorLiveData = MutableLiveData<String>()
+    var employeesErrorLiveData = MutableLiveData<String>()
+
+    fun fetchServices(context: Context) {
+        if (context.isConnectedToNetwork == true) {
+                viewModelScope.launch {
+                    val result = repository.getServices()
+                    if (result.isSuccessful) {
+                        servicesLiveData.postValue(result.body()?.data)
+                        servicesErrorLiveData.value = ""
+                    } else
+                        servicesErrorLiveData.postValue(result.message())
+                }
+            }
+        else
+            servicesErrorLiveData.postValue(context.getString(R.string.connect_error))
     }
 
-    fun fetchEmployees() {
-        viewModelScope.launch {
-            val result = repository.getEmployees()
-            if (result.isSuccessful)
-                employeesLiveData.postValue(result.body()?.data)
+    fun fetchEmployees(context: Context) {
+        if (context.isConnectedToNetwork == true) {
+            viewModelScope.launch {
+                val result = repository.getEmployees()
+                if (result.isSuccessful) {
+                    employeesLiveData.postValue(result.body()?.data)
+                    employeesErrorLiveData.value = ""
+                } else
+                    employeesErrorLiveData.postValue(result.message())
+            }
+        } else
+            employeesErrorLiveData.postValue(context.getString(R.string.connect_error))
+    }
+
+    fun addToCart(context: Context, employees: ArrayList<Employee>?, services: ArrayList<Service>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val cart = Cart(employees = gson.toJson(employees), services = gson.toJson(services))
+            dao.insert(cart)
         }
+
+        Toast.makeText(context, " Item with employee(s) added to Cart", Toast.LENGTH_SHORT).show()
     }
 }

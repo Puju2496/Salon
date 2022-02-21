@@ -43,13 +43,21 @@ class EmployeeItemAdapter: RecyclerView.Adapter<ItemViewHolder>() {
             binding.executePendingBindings()
 
             binding.root.setOnClickListener {
-                binding.root.isSelected = !binding.root.isSelected
-                binding.selected.isVisible = binding.root.isSelected
+                val isSelected = !binding.root.isSelected
+                binding.root.isSelected = isSelected
+                binding.selected.isVisible = isSelected
+
+                if (isSelected)
+                    clickListener?.onEmployeeSelected(employee)
+                else
+                    clickListener?.onEmployeeUnselected(employee)
             }
         }
     }
 
     interface OnEmployeeSelectListener {
         fun onEmployeeSelected(employee: Employee)
+
+        fun onEmployeeUnselected(employee: Employee)
     }
 }
