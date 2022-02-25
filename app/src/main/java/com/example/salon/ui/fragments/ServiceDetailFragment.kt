@@ -55,14 +55,18 @@ class ServiceDetailFragment : Fragment(R.layout.fragment_service_detail), View.O
 
         viewModel.employeesLiveData.observe(viewLifecycleOwner, employeeListObserver)
         viewModel.employeesErrorLiveData.observe(viewLifecycleOwner, errorObserver)
-        viewModel.fetchEmployees(requireContext())
+        viewModel.fetchEmployees(requireContext()).also {
+            binding.progressBar.visibility = View.VISIBLE
+        }
     }
 
     private val employeeListObserver = Observer<List<Employee>> {
+        binding.progressBar.visibility = View.GONE
         employeeItemAdapter.setEmployeeList(it)
     }
 
     private val errorObserver = Observer<String> {
+        binding.progressBar.visibility = View.GONE
         binding.error.text = it
         binding.employeeList.visibility = if (it.isEmpty()) View.VISIBLE else View.INVISIBLE
         binding.error.isVisible = it.isNotEmpty()
@@ -78,10 +82,16 @@ class ServiceDetailFragment : Fragment(R.layout.fragment_service_detail), View.O
                 val mappedData = selectedEmployeeList.keys.stream()
                     .collect(Collectors.groupingBy { selectedEmployeeList[it] })
 
-                viewModel.addToCart(requireContext(), mappedData.keys.first(), mappedData.values.first() as ArrayList<Service>)
+                viewModel.addToCart(
+                    requireContext(),
+                    mappedData.keys.first(),
+                    mappedData.values.first() as ArrayList<Service>
+                )
 
             }
             R.id.error -> {
+                binding.error.visibility = View.GONE
+                binding.progressBar.visibility = View.VISIBLE
                 viewModel.fetchEmployees(requireContext())
             }
         }

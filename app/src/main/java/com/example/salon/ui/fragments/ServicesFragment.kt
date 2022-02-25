@@ -50,7 +50,9 @@ class ServicesFragment : Fragment(R.layout.fragment_services),
 
         viewModel.servicesLiveData.observe(viewLifecycleOwner, serviceObserver)
         viewModel.servicesErrorLiveData.observe(viewLifecycleOwner, serviceErrorObserver)
-        viewModel.fetchServices(requireContext())
+        viewModel.fetchServices(requireContext()).also {
+            binding.progressBar.visibility = View.VISIBLE
+        }
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
@@ -68,10 +70,12 @@ class ServicesFragment : Fragment(R.layout.fragment_services),
     }
 
     private val serviceObserver = Observer<List<Service>> {
+        binding.progressBar.visibility = View.GONE
         serviceItemAdapter.setServiceList(it)
     }
 
     private val serviceErrorObserver = Observer<String> {
+        binding.progressBar.visibility = View.GONE
         binding.error.text = it
         binding.error.isVisible = it.isNotEmpty()
     }
@@ -104,6 +108,8 @@ class ServicesFragment : Fragment(R.layout.fragment_services),
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.error -> {
+                binding.error.visibility = View.GONE
+                binding.progressBar.visibility = View.VISIBLE
                 viewModel.fetchServices(requireContext())
             }
         }
