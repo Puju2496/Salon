@@ -76,6 +76,7 @@ class ServicesFragment : Fragment(R.layout.fragment_services),
 
     private val serviceErrorObserver = Observer<String> {
         binding.progressBar.visibility = View.GONE
+        binding.list.isVisible = it.isEmpty()
         binding.error.text = it
         binding.error.isVisible = it.isNotEmpty()
     }
