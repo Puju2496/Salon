@@ -15,6 +15,7 @@ import com.example.salon.room.Cart
 import com.example.salon.room.CartDao
 import com.google.gson.GsonBuilder
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -34,8 +35,12 @@ class HomeViewModel @Inject constructor(
     var servicesErrorLiveData = MutableLiveData<String>()
     var employeesErrorLiveData = MutableLiveData<String>()
 
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        throwable.printStackTrace()
+    }
+
     fun fetchServices(context: Context) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
             if (context.isConnectedToNetwork) {
                 if (isOnline) {
                     val result = repository.getServices()
@@ -53,7 +58,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun fetchEmployees(context: Context) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
             if (context.isConnectedToNetwork) {
                 if (isOnline) {
                     val result = repository.getEmployees()
